@@ -111,15 +111,19 @@ The landing page runs on `http://localhost:5000` by default.
 - Public stats API at `/api/stats` that returns live numbers for the page
 - Neon green on dark aesthetic with animated grid background and count-up stats
 
-**Dashboard config**
+**Environment Variables**
 
-Edit `dashboard/config.py` to set your database path and secret key.
+Create a `.env` file inside the `dashboard/` folder and paste the following:
 
-```python
-SECRET_KEY = "your_secret_key"
-DATABASE_PATH = "../database.db"
-GUILDS_PATH = "../guilds.json"
+```dotenv
+PORT=5000
+SECRET_KEY=your_secret_key
+DISCORD_CLIENT_ID=your_client_id
+DISCORD_CLIENT_SECRET=your_client_secret
+DISCORD_REDIRECT_URI=http://localhost:5000/callback
 ```
+
+> ⚠️ Never commit your `.env` file to GitHub. Add it to `.gitignore` to keep your credentials safe.
 
 ---
 
