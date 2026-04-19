@@ -1,0 +1,93 @@
+{
+    "1436697539486158952": {
+        "gen-channels": [
+            1477368355278028830,
+            1436697540853633188
+        ],
+        "premium-gen-channels": [],
+        "admin-roles": [
+            1477368459284447375
+        ],
+        "suggestions-channel-id": null,
+        "ticket-category": null,
+        "ticket-staff-role": null,
+        "ticket-transcript-channel": null,
+        "roles": [],
+        "review-channel-id": "1436837831644287188"
+    },
+    "1438617457744154824": {
+        "gen-channels": [
+            1474129232753066026
+        ],
+        "premium-gen-channels": [],
+        "admin-roles": [
+            1474129299157291119
+        ],
+        "suggestions-channel-id": null,
+        "ticket-category": null,
+        "ticket-staff-role": null,
+        "ticket-transcript-channel": null,
+        "roles": [
+            {
+                "id": 1474125630705631314,
+                "type": "free",
+                "free-cooldown": 5,
+                "premium-cooldown": 5,
+                "gen-access": [
+                    "all"
+                ],
+                "remove-if-expired": false
+            },
+            {
+                "id": 1477165573786832978,
+                "type": "premium",
+                "free-cooldown": 1,
+                "premium-cooldown": 1,
+                "gen-access": [
+                    "all"
+                ],
+                "remove-if-expired": false
+            }
+        ],
+        "review-channel-id": "1474129232753066026"
+    },
+    "1449875801494388828": {
+        "gen-channels": [
+            1461610270794453095
+        ],
+        "premium-gen-channels": [],
+        "admin-roles": [
+            1461610030372487178
+        ],
+        "suggestions-channel-id": null,
+        "ticket-category": null,
+        "ticket-staff-role": null,
+        "ticket-transcript-channel": null,
+        "roles": [
+            {
+                "id": 1461610149088071742,
+                "type": "free",
+                "free-cooldown": 5,
+                "premium-cooldown": 5,
+                "gen-access": [
+                    "all"
+                ],
+                "remove-if-expired": false
+            }
+        ],
+        "review-channel": null,
+        "invite-code": null,
+        "review-channel-id": "1461610273889849436"
+    },
+    "1477827604470829230": {
+        "gen-channels": [],
+        "premium-gen-channels": [],
+        "admin-roles": [],
+        "suggestions-channel-id": null,
+        "ticket-category": null,
+        "ticket-staff-role": null,
+        "ticket-transcript-channel": null,
+        "roles": [],
+        "review-channel-id": null
+    }
+}

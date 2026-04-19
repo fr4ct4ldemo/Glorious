@@ -1,0 +1,25 @@
+{
+    "token": "",
+    "stock-command-silent": false,
+    "remove-capture-from-stock": true,
+    "commands-give-cooldown": true,
+    "default_cooldown": 5,
+    "stock-storage-path": "/stock_data",
+    "subscription-stages": [
+        "Free",
+        "Premium"
+    ],
+    "messages": {
+        "altsent": "Thank you for using **Glorious**",
+        "footer-msg": "fr4ct4l"
+    },
+    "generate-settings": {
+        "gif-img-url": "https://media1.tenor.com/m/tM-b_68cljEAAAAd/playboi-carti-carti.gif"
+    },
+    "colors": {
+        "error": 3801876,
+        "success": 3801876,
+        "stock": 3801876
+    },
+    "maximum-file-size": 2097152
+}

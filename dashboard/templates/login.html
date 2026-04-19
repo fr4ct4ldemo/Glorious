@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block auth_content %}
+<div class="login-page">
+    <div class="login-bg">
+        <div class="login-glow"></div>
+    </div>
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">⚡</div>
+            <h1 class="neon-text">Glorious</h1>
+            <p class="login-subtitle">Account Generator Bot Dashboard</p>
+        </div>
+        <div class="login-features">
+            <div class="login-feature">
+                <i class="fas fa-box"></i>
+                <span>Manage Stock</span>
+            </div>
+            <div class="login-feature">
+                <i class="fas fa-users"></i>
+                <span>Manage Users</span>
+            </div>
+            <div class="login-feature">
+                <i class="fas fa-chart-line"></i>
+                <span>View Analytics</span>
+            </div>
+            <div class="login-feature">
+                <i class="fas fa-cog"></i>
+                <span>Configure Bot</span>
+            </div>
+        </div>
+        <a href="/auth/discord" class="btn btn-discord btn-login-main">
+            <i class="fab fa-discord"></i>
+            Login with Discord
+        </a>
+        <p class="login-note">
+            <i class="fas fa-lock"></i>
+            Requires Manage Server permission
+        </p>
+    </div>
+</div>
+{% endblock %}
+            <a href="{{ url_for('auth_bp.discord_login') }}" class="btn-primary">

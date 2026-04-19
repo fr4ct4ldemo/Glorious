@@ -1,0 +1,25 @@
+{
+  "name": "discord-ticket-system",
+  "version": "1.0.0",
+  "description": "A fully featured ticket system using Discord.js v14 with modals, buttons, and embeds",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "discord",
+    "ticket",
+    "bot",
+    "discord.js"
+  ],
+  "author": "Cline",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

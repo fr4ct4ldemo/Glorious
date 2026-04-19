@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">My Servers</h1>
+        <p class="page-subtitle">Select a server to manage</p>
+    </div>
+</div>
+
+<div class="servers-grid">
+    {% for guild in guilds %}
+    <div class="server-card">
+        {% if guild.icon_url %}
+        <img src="{{ guild.icon_url }}" class="server-icon" alt="{{ guild.name }}">
+        {% else %}
+        <div class="server-icon-placeholder">{{ guild.name[0] }}</div>
+        {% endif %}
+        <h3 class="server-name">{{ guild.name }}</h3>
+        <div class="server-status">
+            {% if guild.bot_in_server %}
+            <span class="badge badge-success">
+                <i class="fas fa-check"></i> Bot Active
+            </span>
+            {% else %}
+            <span class="badge badge-warning">
+                <i class="fas fa-exclamation"></i> Not Added
+            </span>
+            {% endif %}
+        </div>
+        {% if guild.bot_in_server %}
+        <a href="/dashboard/{{ guild.id }}" class="btn btn-primary btn-full">
+            <i class="fas fa-cog"></i> Manage Server
+        </a>
+        {% else %}
+        <a href="https://discord.com/oauth2/authorize?client_id={{ client_id }}&permissions=8&scope=bot+applications.commands&guild_id={{ guild.id }}"
+           class="btn btn-discord btn-full" target="_blank">
+            <i class="fab fa-discord"></i> Add Bot
+        </a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

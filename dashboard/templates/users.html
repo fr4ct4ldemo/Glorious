@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">User Management</h1>
+        <p class="page-subtitle">View and manage all users who have used the bot</p>
+    </div>
+    <div>
+        <span class="badge badge-success">{{ users|length }} Users</span>
+    </div>
+</div>
+
+<div class="dashboard-card">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-users"></i> All Users</h3>
+        <input type="text" class="search-input" id="userSearch" placeholder="Search by user ID..." onkeyup="searchUsers()">
+    </div>
+    <div class="card-body">
+        {% if users %}
+        <table class="table" id="usersTable">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Free Genned</th>
+                    <th>Premium Genned</th>
+                    <th>Subscription</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td><code>{{ u.user_id }}</code></td>
+                    <td><span class="neon-text">{{ u.amount_genned }}</span></td>
+                    <td><span class="text-purple">{{ u.prem_amount_genned }}</span></td>
+                    <td><span class="badge {% if u.subscription_stage == 'Premium' %}badge-purple{% else %}badge-default{% endif %}">{{ u.subscription_stage }}</span></td>
+                    <td>{% if u.is_blacklisted %}<span class="badge badge-danger">Blacklisted</span>{% else %}<span class="badge badge-success">Active</span>{% endif %}</td>
+                    <td>
+                        <button class="btn btn-sm {% if u.is_blacklisted %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleBlacklist('{{ guild_id }}', '{{ u.user_id }}', {{ 'false' if u.is_blacklisted else 'true' }})">
+                            {% if u.is_blacklisted %}<i class="fas fa-unlock"></i> Unblacklist{% else %}<i class="fas fa-ban"></i> Blacklist{% endif %}
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-users"></i>
+            <p>No users found</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Gen Count</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr data-user="{{ user.user_id }}">
+            <td><code>{{ user.user_id }}</code></td>
+            <td>{{ user.gen_count }}</td>
+            <td>
+                <span class="badge {% if user.is_blacklisted %}badge-danger{% else %}badge-success{% endif %}">
+                    {% if user.is_blacklisted %}Blacklisted{% else %}Active{% endif %}
+                </span>
+            </td>
+            <td>
+                <button class="btn-toggle btn-sm toggle-blacklist" data-user="{{ user.user_id }}" data-status="{{ user.is_blacklisted }}">
+                    {% if user.is_blacklisted %}
+                    ✅ Unblacklist
+                    {% else %}
+                    🚫 Blacklist
+                    {% endif %}
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if not users %}
+<div class="empty-state">
+    <p>No users found</p>
+</div>
+{% endif %}
+
+<script>
+document.querySelectorAll('.toggle-blacklist').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const userId = this.dataset.user;
+        const currentStatus = this.dataset.status === 'True';
+        const newStatus = !currentStatus;
+        
+        if (!confirm(`${newStatus ? 'Blacklist' : 'Unblacklist'} user ${userId}?`)) return;
+        
+        this.disabled = true;
+        const originalText = this.textContent;
+        this.textContent = '⏳ Updating...';
+        
+        try {
+            const response = await fetch('/api/guild/{{ guild_id }}/users/blacklist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, blacklisted: newStatus })
+            });
+            
+            if (response.ok) {
+                const row = document.querySelector(`tr[data-user="${userId}"]`);
+                const statusBadge = row.querySelector('.badge');
+                const button = row.querySelector('.toggle-blacklist');
+                
+                if (newStatus) {
+                    statusBadge.className = 'badge badge-danger';
+                    statusBadge.textContent = 'Blacklisted';
+                    button.textContent = '✅ Unblacklist';
+                    button.dataset.status = 'True';
+                } else {
+                    statusBadge.className = 'badge badge-success';
+                    statusBadge.textContent = 'Active';
+                    button.textContent = '🚫 Blacklist';
+                    button.dataset.status = 'False';
+                }
+                
+                button.disabled = false;
+                showNotification(`User ${newStatus ? 'blacklisted' : 'unblacklisted'} successfully`, 'success');
+            } else {
+                showNotification('Failed to update user status', 'error');
+                this.disabled = false;
+                this.textContent = originalText;
+            }
+        } catch (error) {
+            showNotification('Error: ' + error.message, 'error');
+            this.disabled = false;
+            this.textContent = originalText;
+        }
+    });
+});
+
+function showNotification(message, type) {
+    const div = document.createElement('div');
+    div.className = `notification notification-${type}`;
+    div.textContent = message;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
+}
+</script>
+{% endblock %}

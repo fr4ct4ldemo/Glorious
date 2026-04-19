@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Stock Management</h1>
+        <p class="page-subtitle">View and manage your account stock per service</p>
+    </div>
+</div>
+
+<div class="dashboard-card">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-box"></i> Services</h3>
+        <span class="badge badge-success">{{ services|length }} Services</span>
+    </div>
+    <div class="card-body">
+        {% if services %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Service Name</th>
+                    <th>Stock Count</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in services %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><strong>{{ s.service_name }}</strong></td>
+                    <td><span class="neon-text fw-bold">{{ s.count }}</span> <span class="text-muted">accounts</span></td>
+                    <td>
+                        {% if s.count > 10 %}
+                        <span class="badge badge-success">Stocked</span>
+                        {% elif s.count > 0 %}
+                        <span class="badge badge-warning">Low Stock</span>
+                        {% else %}
+                        <span class="badge badge-danger">Empty</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteStock('{{ guild_id }}', '{{ s.service_name }}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>No stock found for this server</p>
+            <p class="text-muted">Use /addstock in Discord to add accounts</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Service</th>
+            <th>Stock Count</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for service in services %}
+        <tr data-service="{{ service.service_name }}">
+            <td>{{ service.service_name }}</td>
+            <td><span class="stock-count">{{ service.count }}</span></td>
+            <td>
+                <button class="btn-danger btn-sm delete-stock" data-service="{{ service.service_name }}">
+                    🗑️ Delete
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if not services %}
+<div class="empty-state">
+    <p>No stock available</p>
+</div>
+{% endif %}
+
+<script>
+document.querySelectorAll('.delete-stock').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const serviceName = this.dataset.service;
+        if (!confirm(`Delete all stock for ${serviceName}?`)) return;
+        
+        this.disabled = true;
+        this.textContent = '⏳ Deleting...';
+        
+        try {
+            const response = await fetch('/api/guild/{{ guild_id }}/stock/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ service_name: serviceName })
+            });
+            
+            if (response.ok) {
+                document.querySelector(`tr[data-service="${serviceName}"]`).remove();
+                showNotification('Stock deleted successfully', 'success');
+            } else {
+                showNotification('Failed to delete stock', 'error');
+                this.disabled = false;
+                this.textContent = '🗑️ Delete';
+            }
+        } catch (error) {
+            showNotification('Error: ' + error.message, 'error');
+            this.disabled = false;
+            this.textContent = '🗑️ Delete';
+        }
+    });
+});
+
+function showNotification(message, type) {
+    const div = document.createElement('div');
+    div.className = `notification notification-${type}`;
+    div.textContent = message;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
+}
+</script>
+{% endblock %}

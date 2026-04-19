@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glorious Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% if session.user %}
+    <div class="app-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">⚡</span>
+                    <span class="logo-text neon-text">Glorious</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-user">
+                <img src="https://cdn.discordapp.com/avatars/{{ session.user.id }}/{{ session.user.avatar }}.png"
+                     class="sidebar-avatar" alt="avatar"
+                     onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                <div class="sidebar-user-info">
+                    <span class="sidebar-username">{{ session.user.username }}</span>
+                    <span class="sidebar-tag neon-text">Online</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a href="/servers" class="nav-item {% if request.endpoint == 'dashboard_bp.servers' %}active{% endif %}">
+                    <i class="fas fa-server"></i>
+                    <span>My Servers</span>
+                </a>
+
+                {% if guild_id is defined %}
+                <div class="nav-section-label">Server</div>
+                <a href="/dashboard/{{ guild_id }}" class="nav-item {% if request.endpoint == 'dashboard_bp.guild_dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="/dashboard/{{ guild_id }}/stock" class="nav-item {% if request.endpoint == 'dashboard_bp.guild_stock' %}active{% endif %}">
+                    <i class="fas fa-box"></i>
+                    <span>Stock</span>
+                    {% if total_services is defined %}
+                    <span class="nav-badge">{{ total_services }}</span>
+                    {% endif %}
+                </a>
+                <a href="/dashboard/{{ guild_id }}/users" class="nav-item {% if request.endpoint == 'dashboard_bp.guild_users' %}active{% endif %}">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="/dashboard/{{ guild_id }}/settings" class="nav-item {% if request.endpoint == 'dashboard_bp.guild_settings' %}active{% endif %}">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                {% endif %}
+
+                <div class="nav-section-label">Account</div>
+                <a href="/logout" class="nav-item nav-item-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="topbar-toggle" id="topbarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    {% if guild is defined and guild %}
+                    <div class="topbar-guild">
+                        {% if guild.icon_url %}
+                        <img src="{{ guild.icon_url }}" class="topbar-guild-icon" alt="{{ guild.name }}">
+                        {% endif %}
+                        <span class="topbar-guild-name">{{ guild.name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-status">
+                        <span class="status-dot"></span>
+                        <span>Bot Online</span>
+                    </div>
+                    <img src="https://cdn.discordapp.com/avatars/{{ session.user.id }}/{{ session.user.avatar }}.png"
+                         class="topbar-avatar" alt="avatar"
+                         onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                </div>
+            </header>
+
+            <div class="page-content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    {% else %}
+    {% block auth_content %}{% endblock %}
+    {% endif %}
+
+    {% include 'partials/review_modal.html' %}
+</body>
+</html>

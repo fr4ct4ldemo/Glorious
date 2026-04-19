@@ -1,0 +1,32 @@
+{
+  "dashboard": {
+    "title": "Glorious Dashboard",
+    "subtitle": "Bot Management Panel",
+    "welcome": "Welcome to",
+    "welcomeMessage": "Manage your Glorious bot, view stock, manage users and configure settings.",
+    "overviewStats": "Overview Stats",
+    "moduleStatus": "Module Status",
+    "botHealth": "Bot Health",
+    "quickActions": "Quick Actions",
+    "languageSelector": "Language",
+    "status": {
+      "online": "Bot Online"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "stock": "Stock",
+      "users": "Users",
+      "settings": "Settings",
+      "servers": "My Servers"
+    },
+    "stats": {
+      "totalStock": "Total Stock",
+      "totalUsers": "Total Users",
+      "totalServices": "Services",
+      "totalGenned": "Total Generated"
+    },
+    "activity": {
+      "title": "Recent Activity"
+    }
+  }
+}

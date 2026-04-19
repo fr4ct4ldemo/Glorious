@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Welcome to Dashboard!</h1>
+        <p class="page-subtitle">Manage your Glorious bot settings and monitor activity in real time.</p>
+    </div>
+    <div class="page-header-actions">
+        <span class="badge badge-success"><i class="fas fa-circle"></i> Bot Online</span>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card stat-card-green">
+        <div class="stat-card-icon"><i class="fas fa-box"></i></div>
+        <div class="stat-card-info">
+            <div class="stat-value">{{ total_stock }}</div>
+            <div class="stat-label">Total Stock</div>
+        </div>
+        <div class="stat-card-bg-icon"><i class="fas fa-box"></i></div>
+    </div>
+    <div class="stat-card stat-card-purple">
+        <div class="stat-card-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-card-info">
+            <div class="stat-value">{{ total_users }}</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card-bg-icon"><i class="fas fa-users"></i></div>
+    </div>
+    <div class="stat-card stat-card-cyan">
+        <div class="stat-card-icon"><i class="fas fa-layer-group"></i></div>
+        <div class="stat-card-info">
+            <div class="stat-value">{{ total_services }}</div>
+            <div class="stat-label">Total Services</div>
+        </div>
+        <div class="stat-card-bg-icon"><i class="fas fa-layer-group"></i></div>
+    </div>
+    <div class="stat-card stat-card-orange">
+        <div class="stat-card-icon"><i class="fas fa-key"></i></div>
+        <div class="stat-card-info">
+            <div class="stat-value">{{ total_genned }}</div>
+            <div class="stat-label">Total Generated</div>
+        </div>
+        <div class="stat-card-bg-icon"><i class="fas fa-key"></i></div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-users"></i> Recent Users</h3>
+            <a href="/dashboard/{{ guild_id }}/users" class="card-link">View All</a>
+        </div>
+        <div class="card-body">
+            {% if recent_users %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Genned</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in recent_users %}
+                    <tr>
+                        <td><code>{{ u.user_id }}</code></td>
+                        <td><span class="neon-text">{{ u.amount_genned }}</span></td>
+                        <td>
+                            {% if u.is_blacklisted %}
+                            <span class="badge badge-danger">Blacklisted</span>
+                            {% else %}
+                            <span class="badge badge-success">Active</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <p>No users yet</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
+        </div>
+        <div class="card-body">
+            <div class="quick-actions-grid">
+                <a href="/dashboard/{{ guild_id }}/stock" class="quick-action quick-action-green">
+                    <i class="fas fa-box"></i>
+                    <span>Stock</span>
+                </a>
+                <a href="/dashboard/{{ guild_id }}/users" class="quick-action quick-action-purple">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="/dashboard/{{ guild_id }}/settings" class="quick-action quick-action-cyan">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="/servers" class="quick-action quick-action-orange">
+                    <i class="fas fa-server"></i>
+                    <span>Servers</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<div class="stats-container">
+    <div class="stat-card">
+        <div class="stat-label">Total Stock</div>
+        <div class="stat-value">{{ total_stock }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value">{{ total_users }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-label">Total Services</div>
+        <div class="stat-value">{{ total_services }}</div>
+    </div>
+</div>
+
+<div class="recent-users-section">
+    <h3>Recent Users</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Gen Count</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in recent_users %}
+            <tr>
+                <td><code>{{ user.user_id }}</code></td>
+                <td>{{ user.gen_count }}</td>
+                <td>
+                    {% if user.is_blacklisted %}
+                    <span class="badge-danger">Blacklisted</span>
+                    {% else %}
+                    <span class="badge-success">Active</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if not recent_users %}
+    <p class="empty-message">No users yet</p>
+    {% endif %}
+</div>
+
+<div class="quick-links">
+    <a href="{{ url_for('dashboard_bp.guild_stock', guild_id=guild_id) }}" class="quick-link">📦 Manage Stock</a>
+    <a href="{{ url_for('dashboard_bp.guild_users', guild_id=guild_id) }}" class="quick-link">👥 Manage Users</a>
+    <a href="{{ url_for('dashboard_bp.guild_settings', guild_id=guild_id) }}" class="quick-link">⚙️ Settings</a>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+<!-- Discord-style Modal: Service Review -->
+<div class="discord-modal-overlay" id="reviewModal">
+    <div class="discord-modal">
+        <div class="discord-modal-header">
+            <div class="discord-modal-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="discord-modal-title-group">
+                <h2 class="discord-modal-title">Glorious — Service Review</h2>
+                <p class="discord-modal-subtitle">We value your feedback</p>
+            </div>
+            <button class="discord-modal-close" onclick="closeReviewModal()">&times;</button>
+        </div>
+        
+        <div class="discord-modal-body">
+            <div class="discord-modal-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span class="discord-modal-warning-text">This form will be submitted to gng. Do not share passwords or other sensitive information.</span>
+            </div>
+            
+            <form id="reviewForm">
+                <div class="discord-form-group">
+                    <label class="discord-form-label">
+                        Rate our service (1–5)<span class="required">*</span><span class="required">*</span>
+                    </label>
+                    <input type="text" class="discord-form-input" placeholder="1 to 5" id="ratingInput">
+                </div>
+                
+                <div class="discord-form-group">
+                    <label class="discord-form-label">
+                        Your feedback<span class="required">*</span><span class="required">*</span>
+                    </label>
+                    <textarea class="discord-form-textarea" placeholder="Tell us about your experience..." id="feedbackInput"></textarea>
+                </div>
+                
+                <div class="discord-form-group">
+                    <label class="discord-form-label">Screenshot URL (optional)</label>
+                    <input type="text" class="discord-form-input" placeholder="https://... — or leave blank to upload a file after" id="screenshotInput">
+                </div>
+            </form>
+        </div>
+        
+        <div class="discord-modal-footer">
+            <button class="discord-btn discord-btn-cancel" onclick="closeReviewModal()">Cancel</button>
+            <button class="discord-btn discord-btn-submit" onclick="submitReview()">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openReviewModal() {
+    document.getElementById('reviewModal').style.display = 'flex';
+}
+
+function closeReviewModal() {
+    document.getElementById('reviewModal').style.display = 'none';
+}
+
+function submitReview() {
+    const rating = document.getElementById('ratingInput').value;
+    const feedback = document.getElementById('feedbackInput').value;
+    const screenshot = document.getElementById('screenshotInput').value;
+    
+    // Add your submit logic here
+    console.log('Submitting review:', { rating, feedback, screenshot });
+    
+    closeReviewModal();
+}
+
+// Close modal when clicking outside
+document.getElementById('reviewModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeReviewModal();
+    }
+});
+</script>

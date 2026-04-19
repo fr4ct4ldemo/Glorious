@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Server Settings</h1>
+        <p class="page-subtitle">Configure your Glorious bot settings for this server</p>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-hashtag"></i> Channel Settings</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-bolt"></i> Gen Channels</label>
+                <input type="text" class="form-input" id="genChannels" value="{{ guild_config.get('gen-channels', [])|join(', ') }}" placeholder="Channel IDs separated by commas">
+                <small class="form-hint">Channel IDs where users can use /gen</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-gem"></i> Premium Gen Channels</label>
+                <input type="text" class="form-input" id="premiumChannels" value="{{ guild_config.get('premium-gen-channels', [])|join(', ') }}" placeholder="Channel IDs separated by commas">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-lightbulb"></i> Suggestions Channel ID</label>
+                <input type="text" class="form-input" id="suggestionsChannel" value="{{ guild_config.get('suggestions-channel-id', '') or '' }}" placeholder="Channel ID">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-star"></i> Review Channel ID</label>
+                <input type="text" class="form-input" id="reviewChannel" value="{{ guild_config.get('review-channel-id', '') or '' }}" placeholder="Channel ID">
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings('{{ guild_id }}')">
+                <i class="fas fa-save"></i> Save Channel Settings
+            </button>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-shield-alt"></i> Role Settings</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-crown"></i> Admin Role IDs</label>
+                <input type="text" class="form-input" id="adminRoles" value="{{ guild_config.get('admin-roles', [])|join(', ') }}" placeholder="Role IDs separated by commas">
+                <small class="form-hint">Roles that can use admin commands</small>
+            </div>
+            <button class="btn btn-primary" onclick="saveRoles('{{ guild_id }}')">
+                <i class="fas fa-save"></i> Save Role Settings
+            </button>
+        </div>
+        <div class="card-header" style="margin-top: 24px">
+            <h3 class="card-title"><i class="fas fa-info-circle"></i> Current Config</h3>
+        </div>
+        <div class="card-body">
+            <div class="config-display">
+                <div class="config-item">
+                    <span class="config-key">Gen Channels</span>
+                    <span class="config-value">{{ guild_config.get('gen-channels', [])|length }} set</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-key">Admin Roles</span>
+                    <span class="config-value">{{ guild_config.get('admin-roles', [])|length }} set</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-key">Suggestions</span>
+                    <span class="config-value neon-text">{{ 'Set' if guild_config.get('suggestions-channel-id') else 'Not Set' }}</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-key">Reviews</span>
+                    <span class="config-value neon-text">{{ 'Set' if guild_config.get('review-channel-id') else 'Not Set' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<form id="settings-form" class="settings-form">
+    <div class="form-section">
+        <h3>Generate Channels</h3>
+        <p class="form-help">Channels where users can use /gen command</p>
+        <input type="text" id="gen-channels" placeholder="Channel IDs separated by commas" 
+               value="{{ ','.join(gen_channels) }}" class="form-input">
+    </div>
+
+    <div class="form-section">
+        <h3>Premium Generate Channels</h3>
+        <p class="form-help">Premium-only channels for /gen command</p>
+        <input type="text" id="premium-gen-channels" placeholder="Channel IDs separated by commas" 
+               value="{{ ','.join(premium_gen_channels) }}" class="form-input">
+    </div>
+
+    <div class="form-section">
+        <h3>Admin Roles</h3>
+        <p class="form-help">Roles with admin permissions for this bot</p>
+        <input type="text" id="admin-roles" placeholder="Role IDs separated by commas" 
+               value="{{ ','.join(admin_roles) }}" class="form-input">
+    </div>
+
+    <div class="form-section">
+        <h3>Suggestions Channel</h3>
+        <p class="form-help">Channel for user suggestions</p>
+        <input type="text" id="suggestions-channel" placeholder="Channel ID" 
+               value="{{ suggestions_channel_id }}" class="form-input">
+    </div>
+
+    <div class="form-section">
+        <h3>Review Channel</h3>
+        <p class="form-help">Channel for reviews and feedback</p>
+        <input type="text" id="review-channel" placeholder="Channel ID" 
+               value="{{ review_channel_id }}" class="form-input">
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn-primary">
+            💾 Save Settings
+        </button>
+    </div>
+</form>
+
+<script>
+document.getElementById('settings-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = '⏳ Saving...';
+    
+    try {
+        const response = await fetch('/api/guild/{{ guild_id }}/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                'gen-channels': document.getElementById('gen-channels').value.split(',').map(x => x.trim()).filter(x => x),
+                'premium-gen-channels': document.getElementById('premium-gen-channels').value.split(',').map(x => x.trim()).filter(x => x),
+                'admin-roles': document.getElementById('admin-roles').value.split(',').map(x => x.trim()).filter(x => x),
+                'suggestions-channel-id': document.getElementById('suggestions-channel').value.trim(),
+                'review-channel-id': document.getElementById('review-channel').value.trim()
+            })
+        });
+        
+        if (response.ok) {
+            showNotification('Settings saved successfully!', 'success');
+        } else {
+            const error = await response.text();
+            showNotification('Failed to save settings: ' + error, 'error');
+        }
+    } catch (error) {
+        showNotification('Error: ' + error.message, 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    }
+});
+
+function showNotification(message, type) {
+    const div = document.createElement('div');
+    div.className = `notification notification-${type}`;
+    div.textContent = message;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
+}
+</script>
+{% endblock %}
