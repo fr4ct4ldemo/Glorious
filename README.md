@@ -91,9 +91,9 @@ python run.py
 
 ---
 
-## Web Dashboard
+## Landing Page / Web Dashboard
 
-Glorious includes a full web dashboard built with Flask and Discord OAuth2.
+Glorious includes a public landing page built with Flask that serves as the bot's invite page.
 
 **Starting the dashboard**
 
@@ -102,24 +102,20 @@ cd dashboard
 python app.py
 ```
 
-The dashboard runs on `http://localhost:5000` by default.
+The landing page runs on `http://localhost:5000` by default.
 
-**Dashboard features**
+**Landing page features**
 
-- Discord OAuth2 login — only server managers can access their guild's dashboard
-- Stock management — view, add, and delete stock categories per server
-- User management — view user stats, blacklist/unblacklist users, set notes
-- Server settings — configure gen channels, premium channels, admin roles, and more
-- Public stats API — `/api/stats` returns live server, user, and generation counts for the landing page
+- Public invite page for Glorious with hero section, features, and how it works
+- Live stats pulled from the bot's database — real server count, user count, and accounts generated
+- Public stats API at `/api/stats` that returns live numbers for the page
+- Neon green on dark aesthetic with animated grid background and count-up stats
 
 **Dashboard config**
 
-Edit `dashboard/config.py` to set your Discord OAuth credentials, database path, and secret key.
+Edit `dashboard/config.py` to set your database path and secret key.
 
 ```python
-CLIENT_ID = "your_discord_client_id"
-CLIENT_SECRET = "your_discord_client_secret"
-REDIRECT_URI = "http://localhost:5000/callback"
 SECRET_KEY = "your_secret_key"
 DATABASE_PATH = "../database.db"
 GUILDS_PATH = "../guilds.json"
